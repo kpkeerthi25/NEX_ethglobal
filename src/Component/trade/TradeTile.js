@@ -1,7 +1,7 @@
 import React from "react";
 import img from './logo192.png'
 
-const TradeTile = () => {
+const TradeTile = (props) => {
     return(
         <div>
             <div className="row shadow p-3 mb-5 bg-white rounded" style ={{display:"flex", justifyContent:"space-between", flexDirection:"row",marginTop:"15px"}}>
@@ -20,10 +20,10 @@ const TradeTile = () => {
                 <div style={{display:"flex", flexDirection:"column"}}>
                     <img src={img} />
                     <div style={{justifyContent:"center",alignItems:"center",alignSelf:"center"}}>
-                        <button style={{margin:" 0 auto"}}>Remove </button>
+                        <button style={{margin:" 0 auto"}}>Approve </button>
                     </div>
                     </div>
-                    <h3 style={{alignSelf:"center", marginLeft:"10px"}}>item1</h3>
+                    <h3 style={{alignSelf:"center", marginLeft:"10px"}}>item2</h3>
                 </div>
             </div>
         </div>

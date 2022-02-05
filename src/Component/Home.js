@@ -80,7 +80,7 @@ const Home = () => {
               path="/trades"
               element={
                 isAuthenticated ? (
-                  <MyTrades/>
+                  <TradeScreen/>
                 ) : (
                   <div>
                     <h1>not logged in</h1>{' '}

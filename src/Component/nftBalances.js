@@ -8,7 +8,7 @@ const { getNFTBalances, data, error, isLoading, isFetching } = useNFTBalances();
   return (
     <div>
       {error && <>{JSON.stringify(error)}</>}
-      <button onClick={() => {getNFTBalances({ params: { chain: "avalanche testnet", address:props.add } })}} disabled={isLoading}>Refetch NFTBalances</button>
+      <button onClick={() => {getNFTBalances({ params: {  address:props.add } })}} disabled={isLoading}>Refetch NFTBalances</button>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );

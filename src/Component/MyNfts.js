@@ -5,7 +5,7 @@ import NftTile from "./NftTile";
 const MyNfts = (props) => {
     const { getNFTBalances, data, error, isLoading, isFetching } = useNFTBalances();
 
-    useEffect(() => {getNFTBalances({ params: { chain: "avalanche testnet", address:props.add } })},[])
+    useEffect(() => {getNFTBalances({ params: { address:props.add } })},[])
     console.log(data)
     return(
         <div class="container">

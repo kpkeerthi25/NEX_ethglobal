@@ -4,10 +4,18 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 import "hardhat/console.sol";
 
-contract NFTMarket is ReentrancyGuard {
+contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
+
+  bytes32 internal keyHash;
+  uint256 internal fee;
+    
+  uint256 public randomResult;
+
+
   using Counters for Counters.Counter;
 
   Counters.Counter private _tradeItemIds;
@@ -15,13 +23,41 @@ contract NFTMarket is ReentrancyGuard {
 
   address payable owner;
 
-  constructor() {
+  constructor() VRFConsumerBase(
+            0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
+            	0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token
+        ) {
     owner = payable(msg.sender);
+    
+    
+        keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
+        fee = 0.0001 * 10 ** 18; // 0.1 LINK (Varies by network)
+    
   }
+
+  function getRandomNumber() internal returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        return requestRandomness(keyHash, fee);
+    }
+
+    /**
+     * Callback function used by VRF Coordinator
+     */
+    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+        randomResult = randomness;
+    }
+
+    function callKeccak256(uint256 data) internal view returns(bytes32){
+      return bytes32(keccak256(abi.encodePacked(block.timestamp,
+                                          msg.sender,
+                                          data))) ;
+                                          
+   } 
 
 //trade item struct 
   struct TradeItem {
       uint256 tradeItemId;
+      bytes32 hash;
       uint256 item1;
       uint256 item2;
       address creator;
@@ -42,6 +78,7 @@ contract NFTMarket is ReentrancyGuard {
   }
 
   mapping(uint256 => TradeItem) private idToTradeItem;
+  mapping(bytes32 => uint256) private hashToTradeItem;
   mapping(uint256 => NftItem) private idToNft;
   mapping(address => uint256) private TradeItemCreatorCount;
   mapping(address => uint256) private TradeItemParticipantCount;
@@ -75,9 +112,11 @@ contract NFTMarket is ReentrancyGuard {
   ) public nonReentrant {
     _tradeItemIds.increment();
     uint256 tradeItemId = _tradeItemIds.current();
-
+    getRandomNumber();
+    bytes32 hash = callKeccak256(randomResult);
     idToTradeItem[tradeItemId] = TradeItem(
       tradeItemId,
+      hash,
       createNftItem(nftContract,tokenId),
       0,
       msg.sender,
@@ -86,6 +125,7 @@ contract NFTMarket is ReentrancyGuard {
       false
     );
 
+    hashToTradeItem[hash] = tradeItemId;
     TradeItemCreatorCount[msg.sender]++;
 }
 
@@ -140,6 +180,7 @@ contract NFTMarket is ReentrancyGuard {
 
      if(idToNft[idToTradeItem[tradeItemId].item1].isApprovedByTrader && idToNft[idToTradeItem[tradeItemId].item2].isApprovedByTrader && idToTradeItem[tradeItemId].isActive && idToNft[idToTradeItem[tradeItemId].item1].isActive && idToNft[idToTradeItem[tradeItemId].item2].isActive)
         proceedTrade(tradeItemId);
+        idToTradeItem[tradeItemId].isActive = false;
   }
 
   function removeNft(
@@ -161,6 +202,7 @@ contract NFTMarket is ReentrancyGuard {
     else 
     revert("ERROR: NO NFT IS REMOVED");
   }
+
 
   function deleteTradeItem(
     uint256 tradeItemId
@@ -207,20 +249,45 @@ contract NFTMarket is ReentrancyGuard {
     return idToNft[nftNo];
   }
 
-  function getTradeItem(uint256 No) public view returns (TradeItem memory) {
-    return idToTradeItem[No];
+  struct TradeItemDTO {
+      uint256 tradeItemId;
+      bytes32 hash;
+      NftItem item1;
+      NftItem item2;
+      address creator;
+      address participant;
+      bool isActive;
+      bool isComplete;
   }
 
-  function getActiveTradesCreated() public view returns (TradeItem[] memory) {
+
+  function getTradeItem(bytes32 hash) public view returns (TradeItemDTO memory) {
+    uint256 No = hashToTradeItem[hash];
+    TradeItem storage tempItem = idToTradeItem[No];
+    NftItem storage i1 = idToNft[tempItem.item1];
+    NftItem storage i2 = idToNft[tempItem.item2];
+    TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
+    return currentItem;
+  }
+
+
+  function getActiveTradesCreated() public view returns (TradeItemDTO[] memory) {
     uint totalItemCount = _tradeItemIds.current();
     uint tradeCount=TradeItemCreatorCount[msg.sender];
     uint currentIndex = 0;
 
-    TradeItem[] memory items = new TradeItem[](tradeCount);
+    if(tradeCount==0) {
+      revert("ERROR: NO TRADE ITEM AVAILABLE");
+    }
+
+    TradeItemDTO[] memory items = new TradeItemDTO[](tradeCount);
     for (uint i = 0; i < totalItemCount; i++) {
       if (idToTradeItem[i + 1].creator == msg.sender && idToTradeItem[i + 1].isActive) {
         uint currentId = i + 1;
-        TradeItem storage currentItem = idToTradeItem[currentId];
+        TradeItem storage tempItem = idToTradeItem[currentId];
+        NftItem storage i1 = idToNft[tempItem.item1];
+        NftItem storage i2 = idToNft[tempItem.item2];
+        TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }
@@ -229,7 +296,7 @@ contract NFTMarket is ReentrancyGuard {
 
   }
 
-  function getActiveTradesParticipated() public view returns (TradeItem[] memory) {
+  function getActiveTradesParticipated() public view returns (TradeItemDTO[] memory) {
     uint totalItemCount = _tradeItemIds.current();
     uint tradeCount= TradeItemParticipantCount[msg.sender];
     uint currentIndex = 0;
@@ -238,11 +305,14 @@ contract NFTMarket is ReentrancyGuard {
       revert("ERROR: NO TRADE ITEM AVAILABLE");
     }
 
-    TradeItem[] memory items = new TradeItem[](tradeCount);
+    TradeItemDTO[] memory items = new TradeItemDTO[](tradeCount);
     for (uint i = 0; i < totalItemCount; i++) {
       if((idToTradeItem[i+1].participant == msg.sender) && idToTradeItem[i+1].isActive) {
         uint currentId = i + 1;
-        TradeItem storage currentItem = idToTradeItem[currentId];
+        TradeItem storage tempItem = idToTradeItem[currentId];
+        NftItem storage i1 = idToNft[tempItem.item1];
+        NftItem storage i2 = idToNft[tempItem.item2];
+        TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }
@@ -250,5 +320,7 @@ contract NFTMarket is ReentrancyGuard {
     return items;
 
   }
+
+
 
 }

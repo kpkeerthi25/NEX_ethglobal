@@ -1,10 +1,5 @@
 [
 	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -77,6 +72,42 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "requestId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "randomness",
+				"type": "uint256"
+			}
+		],
+		"name": "rawFulfillRandomness",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tradeItemId",
+				"type": "uint256"
+			}
+		],
+		"name": "removeNft",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"inputs": [],
 		"name": "getActiveTradesCreated",
 		"outputs": [
@@ -88,14 +119,93 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
-						"name": "item1",
-						"type": "uint256"
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
 					},
 					{
-						"internalType": "uint256",
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
+						"name": "item1",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
 						"name": "item2",
-						"type": "uint256"
+						"type": "tuple"
 					},
 					{
 						"internalType": "address",
@@ -118,7 +228,7 @@
 						"type": "bool"
 					}
 				],
-				"internalType": "struct NFTMarket.TradeItem[]",
+				"internalType": "struct NFTMarket.TradeItemDTO[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -138,14 +248,93 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
-						"name": "item1",
-						"type": "uint256"
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
 					},
 					{
-						"internalType": "uint256",
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
+						"name": "item1",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
 						"name": "item2",
-						"type": "uint256"
+						"type": "tuple"
 					},
 					{
 						"internalType": "address",
@@ -168,7 +357,7 @@
 						"type": "bool"
 					}
 				],
-				"internalType": "struct NFTMarket.TradeItem[]",
+				"internalType": "struct NFTMarket.TradeItemDTO[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -285,9 +474,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "No",
-				"type": "uint256"
+				"internalType": "bytes32",
+				"name": "hash",
+				"type": "bytes32"
 			}
 		],
 		"name": "getTradeItem",
@@ -300,14 +489,93 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
-						"name": "item1",
-						"type": "uint256"
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
 					},
 					{
-						"internalType": "uint256",
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
+						"name": "item1",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "NftItemId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "nftContract",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address payable",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprovedByTrader",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTMarket.NftItem",
 						"name": "item2",
-						"type": "uint256"
+						"type": "tuple"
 					},
 					{
 						"internalType": "address",
@@ -330,7 +598,7 @@
 						"type": "bool"
 					}
 				],
-				"internalType": "struct NFTMarket.TradeItem",
+				"internalType": "struct NFTMarket.TradeItemDTO",
 				"name": "",
 				"type": "tuple"
 			}
@@ -339,16 +607,16 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
+		"inputs": [],
+		"name": "randomResult",
+		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "tradeItemId",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "removeNft",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
