@@ -1,24 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{useEffect} from "react";
+import { useMoralis } from "react-moralis";
+import Moralis from 'moralis'
+import ERC20Balances from "./Component/balance";
+import NativeBalance from "./Component/nativeBalance";
+import NFTBalances from "./Component/nftBalances";
+import Home from "./Component/Home"
 
 function App() {
+  const { authenticate, isAuthenticated, user, logout} = useMoralis();
+
+  // if (!isAuthenticated) {
+  //   return (
+  //     <div>
+  //       <button onClick={() => {
+  //         authenticate();
+  //       // Moralis.enableWeb3();
+        
+  //     }
+  //         }>Authenticate</button>
+  //     </div>
+  //   );
+  // }
+
+  /* <h1>Welcome {user.get("ethAddress") }</h1>
+      <ERC20Balances add={user.get("ethAddress")}/>
+      <NativeBalance add={user.get("ethAddress")}/>
+      <NFTBalances add={user.get("ethAddress")}/>
+      <button onClick={()=>{logout()}}> logout </button> */
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    
+      
+      
+      // <h1>Hello world</h1>
+      <Home/>
+      
   );
 }
 
