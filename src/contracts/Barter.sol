@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 import "hardhat/console.sol";
 
@@ -71,6 +72,7 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
     uint256 NftItemId;
     address nftContract;
     uint256 tokenId;
+    string tokenURI;
     address payable seller;
     address payable owner;
     bool isApprovedByTrader;
@@ -88,6 +90,9 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
     uint256 tokenId
     ) internal returns (uint256) {
 
+      IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+      string memory tokenURI  = IERC721Metadata(nftContract).tokenURI(tokenId);
+
       _NftItemId.increment();
       uint256 NftItemId = _NftItemId.current();
 
@@ -95,12 +100,13 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
         NftItemId,
         nftContract,
         tokenId,
+        tokenURI,
         payable(msg.sender),
         payable(address(0)),
         false,
         true
       );
-      IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+      
 
       return NftItemId;
     }
@@ -174,13 +180,18 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
      }
      else if(!(idToTradeItem[tradeItemId].item1==nftNo || idToTradeItem[tradeItemId].item2==nftNo))
         revert("This trade item does not contain this nft token");
-     else {
+     else if(!(msg.sender == idToTradeItem[tradeItemId].participant || msg.sender == idToTradeItem[tradeItemId].creator)) {
+        revert("This trade cannot be approved by you");
+     }
+     else{
         idToNft[nftNo].isApprovedByTrader = true;
      }
 
-     if(idToNft[idToTradeItem[tradeItemId].item1].isApprovedByTrader && idToNft[idToTradeItem[tradeItemId].item2].isApprovedByTrader && idToTradeItem[tradeItemId].isActive && idToNft[idToTradeItem[tradeItemId].item1].isActive && idToNft[idToTradeItem[tradeItemId].item2].isActive)
+     if(idToNft[idToTradeItem[tradeItemId].item1].isApprovedByTrader && idToNft[idToTradeItem[tradeItemId].item2].isApprovedByTrader && idToTradeItem[tradeItemId].isActive && idToNft[idToTradeItem[tradeItemId].item1].isActive && idToNft[idToTradeItem[tradeItemId].item2].isActive){
         proceedTrade(tradeItemId);
         idToTradeItem[tradeItemId].isActive = false;
+     }
+        
   }
 
   function removeNft(
@@ -263,7 +274,7 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
 
   function getTradeItem(bytes32 hash) public view returns (TradeItemDTO memory) {
     uint256 No = hashToTradeItem[hash];
-    TradeItem storage tempItem = idToTradeItem[No];
+    TradeItem memory tempItem = idToTradeItem[No];
     NftItem storage i1 = idToNft[tempItem.item1];
     NftItem storage i2 = idToNft[tempItem.item2];
     TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
@@ -284,7 +295,7 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
     for (uint i = 0; i < totalItemCount; i++) {
       if (idToTradeItem[i + 1].creator == msg.sender && idToTradeItem[i + 1].isActive) {
         uint currentId = i + 1;
-        TradeItem storage tempItem = idToTradeItem[currentId];
+        TradeItem memory tempItem = idToTradeItem[currentId];
         NftItem storage i1 = idToNft[tempItem.item1];
         NftItem storage i2 = idToNft[tempItem.item2];
         TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
@@ -302,14 +313,14 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
     uint currentIndex = 0;
 
     if(tradeCount==0) {
-      revert("ERROR: NO TRADE ITEM AVAILABLE");
+      revert("ERROR: NO TRADE ITEM Participated AVAILABLE");
     }
 
     TradeItemDTO[] memory items = new TradeItemDTO[](tradeCount);
     for (uint i = 0; i < totalItemCount; i++) {
       if((idToTradeItem[i+1].participant == msg.sender) && idToTradeItem[i+1].isActive) {
         uint currentId = i + 1;
-        TradeItem storage tempItem = idToTradeItem[currentId];
+        TradeItem memory tempItem = idToTradeItem[currentId];
         NftItem storage i1 = idToNft[tempItem.item1];
         NftItem storage i2 = idToNft[tempItem.item2];
         TradeItemDTO memory currentItem = TradeItemDTO(tempItem.tradeItemId,tempItem.hash,i1,i2,tempItem.creator,tempItem.participant,tempItem.isActive,tempItem.isComplete);
@@ -320,7 +331,5 @@ contract NFTMarket is ReentrancyGuard,VRFConsumerBase {
     return items;
 
   }
-
-
 
 }

@@ -1,5 +1,10 @@
 [
 	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -72,42 +77,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "requestId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint256",
-				"name": "randomness",
-				"type": "uint256"
-			}
-		],
-		"name": "rawFulfillRandomness",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tradeItemId",
-				"type": "uint256"
-			}
-		],
-		"name": "removeNft",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"inputs": [],
 		"name": "getActiveTradesCreated",
 		"outputs": [
@@ -139,6 +108,11 @@
 								"internalType": "uint256",
 								"name": "tokenId",
 								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
 							},
 							{
 								"internalType": "address payable",
@@ -181,6 +155,11 @@
 								"internalType": "uint256",
 								"name": "tokenId",
 								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
 							},
 							{
 								"internalType": "address payable",
@@ -270,6 +249,11 @@
 								"type": "uint256"
 							},
 							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
+							},
+							{
 								"internalType": "address payable",
 								"name": "seller",
 								"type": "address"
@@ -310,6 +294,11 @@
 								"internalType": "uint256",
 								"name": "tokenId",
 								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
 							},
 							{
 								"internalType": "address payable",
@@ -387,6 +376,11 @@
 						"type": "uint256"
 					},
 					{
+						"internalType": "string",
+						"name": "tokenURI",
+						"type": "string"
+					},
+					{
 						"internalType": "address payable",
 						"name": "seller",
 						"type": "address"
@@ -441,6 +435,11 @@
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "tokenURI",
+						"type": "string"
 					},
 					{
 						"internalType": "address payable",
@@ -511,6 +510,11 @@
 								"type": "uint256"
 							},
 							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
+							},
+							{
 								"internalType": "address payable",
 								"name": "seller",
 								"type": "address"
@@ -551,6 +555,11 @@
 								"internalType": "uint256",
 								"name": "tokenId",
 								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "tokenURI",
+								"type": "string"
 							},
 							{
 								"internalType": "address payable",
@@ -617,6 +626,37 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "requestId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "randomness",
+				"type": "uint256"
+			}
+		],
+		"name": "rawFulfillRandomness",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tradeItemId",
+				"type": "uint256"
+			}
+		],
+		"name": "removeNft",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

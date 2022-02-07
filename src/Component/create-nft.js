@@ -32,7 +32,6 @@ const CreateNFT = (props) => {
       }  
     }
 
-    
      const options = {
             abi:NFTABI,
             contractAddress: process.env.REACT_APP_NFT,

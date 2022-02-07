@@ -9,6 +9,7 @@ import MyTrades from './myTrades'
 import MyNfts from './MyNfts'
 import TradeItem from './TradeItem'
 import TradeScreen from './trade/TradeScreen'
+import SearchTrade from './trade/SearchTrade'
 
 const Home = () => {
   const { authenticate, isAuthenticated, user, logout } = useMoralis()
@@ -92,7 +93,7 @@ const Home = () => {
               path="/search"
               element={
                 isAuthenticated ? (
-                  <TradeItem add={user.get('ethAddress')}/>
+                  <SearchTrade add={user.get('ethAddress')}/>
                 ) : (
                   <div>
                     <h1>not logged in</h1>{' '}
